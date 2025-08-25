@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Sizing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: white;
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        header {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+        
+        .controls {
+            grid-column: 1 / 2;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        
+        select, input, button {
+            padding: 12px;
+            border: 2px solid #3498db;
+            border-radius: 5px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .grid-visualization {
+            grid-column: 2 / 3;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .grid-container {
+            display: grid;
+            height: 400px;
+            gap: 10px;
+            padding: 15px;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            border: 2px solid #bdc3c7;
+        }
+        
+        .grid-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+            transition: all 0.3s ease;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .code-display {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        
+        .code-display code {
+            display: block;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+        
+        .highlight {
+            background-color: #e74c3c;
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        
+        .value-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        footer {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls, .grid-visualization {
+                grid-column: 1 / -1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1> CSS Grid Sizing</h1>
+            
+        </header>
+        
+        <section class="controls">
+            <div class="control-group">
+                <h2>Tipo de Dimensionamento</h2>
+                <label for="sizingType">Selecione o tipo:</label>
+                <select id="sizingType">
+                    <option value="fixed">Tamanho Fixo</option>
+                    <option value="auto">Auto</option>
+                    <option value="fractional">Fracionado (fr)</option>
+                    <option value="minmax">MinMax</option>
+                    <option value="repeat">Repeat</option>
+                </select>
+            </div>
+            
+            <div class="control-group" id="fixedControls">
+                <h2>Valores Fixos</h2>
+                <label for="fixedValue1">Coluna 1 (px):</label>
+                <input type="text" id="fixedValue1" value="200">
+                
+                <label for="fixedValue2">Coluna 2 (px):</label>
+                <input type="text" id="fixedValue2" value="100">
+                
+                <label for="fixedValue3">Coluna 3 (px):</label>
+                <input type="text" id="fixedValue3" value="150">
+                
+                <button onclick="applyFixedSizing()">Aplicar Valores Fixos</button>
+            </div>
+            
+            <div class="control-group" id="autoControls" style="display: none;">
+                <h2>Valores Auto</h2>
+                <p>O grid ajustará automaticamente o tamanho das colunas com base no conteúdo.</p>
+                <button onclick="applyAutoSizing()">Aplicar Auto Sizing</button>
+            </div>
+            
+            <div class="control-group" id="fractionalControls" style="display: none;">
+                <h2>Valores Fracionados (fr)</h2>
+                <label for="frValue1">Coluna 1 (fr):</label>
+                <input type="text" id="frValue1" value="1">
+                
+                <label for="frValue2">Coluna 2 (fr):</label>
+                <input type="text" id="frValue2" value="2">
+                
+                <label for="frValue3">Coluna 3 (fr):</label>
+                <input type="text" id="frValue3" value="1">
+                
+                <button onclick="applyFractionalSizing()">Aplicar Valores Fracionados</button>
+            </div>
+            
+            <div class="control-group" id="minmaxControls" style="display: none;">
+                <h2>Valores MinMax</h2>
+                <div class="value-controls">
+                    <div>
+                        <label for="minValue1">Mínimo Col 1 (px):</label>
+                        <input type="text" id="minValue1" value="100">
+                    </div>
+                    <div>
+                        <label for="maxValue1">Máximo Col 1:</label>
+                        <input type="text" id="maxValue1" value="1fr">
+                    </div>
+                </div>
+                
+                <div class="value-controls">
+                    <div>
+                        <label for="minValue2">Mínimo Col 2 (px):</label>
+                        <input type="text" id="minValue2" value="200">
+                    </div>
+                    <div>
+                        <label for="maxValue2">Máximo Col 2:</label>
+                        <input type="text" id="maxValue2" value="2fr">
+                    </div>
+                </div>
+                
+                <button onclick="applyMinMaxSizing()">Aplicar MinMax</button>
+            </div>
+            
+            <div class="control-group" id="repeatControls" style="display: none;">
+                <h2>Valores Repeat</h2>
+                <label for="repeatCount">Número de repetições:</label>
+                <input type="text" id="repeatCount" value="3">
+                
+                <label for="repeatSize">Tamanho (px ou fr):</label>
+                <input type="text" id="repeatSize" value="100px">
+                
+                <button onclick="applyRepeatSizing()">Aplicar Repeat</button>
+            </div>
+            
+            <div class="control-group">
+                <h2>Configurações Gerais</h2>
+                <label for="itemCount">Número de Itens no Grid:</label>
+                <input type="number" id="itemCount" min="3" max="12" value="6">
+                
+                <label for="gapSize">Tamanho do Gap (px):</label>
+                <input type="number" id="gapSize" min="0" max="20" value="10">
+                
+                <button onclick="updateGrid()">Aplicar Configurações</button>
+            </div>
+        </section>
+        
+        <section class="grid-visualization">
+            <h2>Visualização do Grid</h2>
+            <div class="grid-container" id="gridDemo">
+                <div class="grid-item" style="background-color: #cf1b07;">1</div>
+                <div class="grid-item" style="background-color: #0867a7;">2</div>
+                <div class="grid-item" style="background-color: #0fc25a;">3</div>
+                <div class="grid-item" style="background-color: #f39c12;">4</div>
+                <div class="grid-item" style="background-color: #782699;">5</div>
+                <div class="grid-item" style="background-color: #16b6c1;">6</div>
+            </div>
+            
+            <div class="code-display">
+                <code id="codeExample">.grid-container {
+  display: grid;
+  grid-template-columns: 200px 100px 150px;
+  gap: 10px;
+}</code>
+            </div>
+        </section>
+        
+        <footer>
+            <p>Altere os valores e clique nos botões "Aplicar" para visualizar as diferentes configurações do CSS Grid</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sizingType = document.getElementById('sizingType');
+            const itemCount = document.getElementById('itemCount');
+            const gapSize = document.getElementById('gapSize');
+            const gridDemo = document.getElementById('gridDemo');
+            const codeExample = document.getElementById('codeExample');
+            
+            // Controles para cada tipo
+            const fixedControls = document.getElementById('fixedControls');
+            const autoControls = document.getElementById('autoControls');
+            const fractionalControls = document.getElementById('fractionalControls');
+            const minmaxControls = document.getElementById('minmaxControls');
+            const repeatControls = document.getElementById('repeatControls');
+            
+            // Cores para os itens do grid
+            const colors = [
+                '#e74c3c', '#3498db', '#2ecc71', '#f39c12', 
+                '#9b59b6', '#1abc9c', '#d35400', '#c0392b',
+                '#16a085', '#2980b9', '#8e44ad', '#27ae60'
+            ];
+            
+            // Mostrar controles baseados no tipo selecionado
+            sizingType.addEventListener('change', function() {
+                const type = this.value;
+                
+                // Esconder todos os controles
+                fixedControls.style.display = 'none';
+                autoControls.style.display = 'none';
+                fractionalControls.style.display = 'none';
+                minmaxControls.style.display = 'none';
+                repeatControls.style.display = 'none';
+                
+                // Mostrar apenas o controle relevante
+                if (type === 'fixed') fixedControls.style.display = 'block';
+                else if (type === 'auto') autoControls.style.display = 'block';
+                else if (type === 'fractional') fractionalControls.style.display = 'block';
+                else if (type === 'minmax') minmaxControls.style.display = 'block';
+                else if (type === 'repeat') repeatControls.style.display = 'block';
+            });
+            
+            // Aplicar tamanhos fixos
+            window.applyFixedSizing = function() {
+                const value1 = document.getElementById('fixedValue1').value;
+                const value2 = document.getElementById('fixedValue2').value;
+                const value3 = document.getElementById('fixedValue3').value;
+                
+                const gridTemplateColumns = `${value1}px ${value2}px ${value3}px`;
+                gridDemo.style.gridTemplateColumns = gridTemplateColumns;
+                
+                codeExample.textContent = `.grid-container {
+  display: grid;
+  grid-template-columns: ${value1}px ${value2}px ${value3}px;
+  gap: ${gapSize.value}px;
+}`;
+            };
+            
+            // Aplicar auto sizing
+            window.applyAutoSizing = function() {
+                gridDemo.style.gridTemplateColumns = 'auto auto auto';
+                
+                codeExample.textContent = `.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: ${gapSize.value}px;
+}`;
+            };
+            
+            // Aplicar valores fracionados
+            window.applyFractionalSizing = function() {
+                const value1 = document.getElementById('frValue1').value;
+                const value2 = document.getElementById('frValue2').value;
+                const value3 = document.getElementById('frValue3').value;
+                
+                const gridTemplateColumns = `${value1}fr ${value2}fr ${value3}fr`;
+                gridDemo.style.gridTemplateColumns = gridTemplateColumns;
+                
+                codeExample.textContent = `.grid-container {
+  display: grid;
+  grid-template-columns: ${value1}fr ${value2}fr ${value3}fr;
+  gap: ${gapSize.value}px;
+}`;
+            };
+            
+            // Aplicar minmax
+            window.applyMinMaxSizing = function() {
+                const min1 = document.getElementById('minValue1').value;
+                const max1 = document.getElementById('maxValue1').value;
+                const min2 = document.getElementById('minValue2').value;
+                const max2 = document.getElementById('maxValue2').value;
+                
+                const gridTemplateColumns = `minmax(${min1}px, ${max1}) minmax(${min2}px, ${max2})`;
+                gridDemo.style.gridTemplateColumns = gridTemplateColumns;
+                
+                codeExample.textContent = `.grid-container {
+  display: grid;
+  grid-template-columns: minmax(${min1}px, ${max1}) minmax(${min2}px, ${max2});
+  gap: ${gapSize.value}px;
+}`;
+            };
+            
+            // Aplicar repeat
+            window.applyRepeatSizing = function() {
+                const count = document.getElementById('repeatCount').value;
+                const size = document.getElementById('repeatSize').value;
+                
+                const gridTemplateColumns = `repeat(${count}, ${size})`;
+                gridDemo.style.gridTemplateColumns = gridTemplateColumns;
+                
+                codeExample.textContent = `.grid-container {
+  display: grid;
+  grid-template-columns: repeat(${count}, ${size});
+  gap: ${gapSize.value}px;
+}`;
+            };
+            
+            // Atualizar o grid com as configurações gerais
+            window.updateGrid = function() {
+                const count = parseInt(itemCount.value);
+                const gap = parseInt(gapSize.value);
+                
+                // Atualizar número de itens
+                updateGridItems(count);
+                
+                // Atualizar gap
+                gridDemo.style.gap = `${gap}px`;
+                
+                // Reaplicar o estilo atual
+                const type = sizingType.value;
+                if (type === 'fixed') applyFixedSizing();
+                else if (type === 'auto') applyAutoSizing();
+                else if (type === 'fractional') applyFractionalSizing();
+                else if (type === 'minmax') applyMinMaxSizing();
+                else if (type === 'repeat') applyRepeatSizing();
+            };
+            
+            function updateGridItems(count) {
+                // Limpar grid atual
+                gridDemo.innerHTML = '';
+                
+                // Adicionar novos itens
+                for (let i = 0; i < count; i++) {
+                    const item = document.createElement('div');
+                    item.className = 'grid-item';
+                    item.textContent = i + 1;
+                    item.style.backgroundColor = colors[i % colors.length];
+                    gridDemo.appendChild(item);
+                }
+            }
+            
+            // Inicializar o grid
+            updateGrid();
+        });
+    </script>
+</body>
+</html>
